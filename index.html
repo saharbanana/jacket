@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jacket?</title>
+  <meta name="description" content="Should you bring a jacket? One screen, one answer, for where you're going and when.">
+  <meta name="theme-color" content="#ECE7DF">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Jacket?">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body data-verdict="neutral">
+
+  <svg width="0" height="0" class="defs" aria-hidden="true">
+    <defs>
+      <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 3h-4l-.4 2.5A7.6 7.6 0 0 0 7 7L4.6 6l-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4L7 18a7.6 7.6 0 0 0 2.6 1.5L10 22h4l.4-2.5A7.6 7.6 0 0 0 17 18l2.4 1 2-3.4-2-1.6Z"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.500C5 14.800 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.500"/></symbol>
+      <symbol id="i-sleeve" viewBox="0 0 240 240">
+        <path class="jk-main" d="M86 58C68 62 55 70 48 83 41 97 31 140 23 176c-1 5 1 8 6 9l21 4c5 1 8-1 9-6l15-60Z"/>
+        <path class="jk-dark" d="M25.300 165 62 172l-3 11c-1 5-4 7-9 6l-21-4c-5-1-7-4-6-9Z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <main id="app" hidden>
+    <header class="top">
+      <button id="placeBtn" class="place" type="button" aria-label="Change location">
+        <span id="placeName" class="place-name">&nbsp;</span>
+        <svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>
+      <button id="settingsBtn" class="icon-btn" type="button" aria-label="Settings">
+        <svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg>
+      </button>
+    </header>
+    <p id="windowLabel" class="window">&nbsp;</p>
+
+    <section class="hero" aria-live="polite" aria-atomic="true">
+      <svg id="jacket" class="jacket" viewBox="0 0 240 240" role="img" aria-label="Jacket">
+        <g class="jk">
+          <path class="jk-inner" d="M100 34Q120 26 140 34L120 62Z"/>
+          <use href="#i-sleeve"/>
+          <use href="#i-sleeve" transform="matrix(-1 0 0 1 240 0)"/>
+          <path class="jk-main" d="M84 57 104 46l16 16 16-16 20 11c9 5 14 13 14 24l2 117c0 6-4 9-9 9H77c-5 0-9-3-9-9l2-117c0-11 5-19 14-24Z"/>
+          <path class="jk-quilt" d="M70 92h100M70 118h100M69.500 144h101M69 170h102"/>
+          <path class="jk-dark" d="M68.300 188h103.400l.3 10c0 6-4 9-9 9H77c-5 0-9-3-9-9Z"/>
+          <path class="jk-dark" d="M101 33c-5 5-8 13-8 21l26 22 1-14Z"/>
+          <path class="jk-dark" d="M139 33c5 5 8 13 8 21l-26 22-1-14Z"/>
+          <path class="jk-zip" d="M120 64v143"/>
+          <rect class="jk-pull" x="116" y="80" width="8" height="15" rx="3"/>
+          <path class="jk-pocket" d="M88 146l9 26M152 146l-9 26"/>
+        </g>
+        <g id="ban" class="ban">
+          <circle class="ban-ring" cx="120" cy="120" r="105" pathLength="100"/>
+          <line class="ban-slash" x1="45.800" y1="45.800" x2="194.200" y2="194.200" pathLength="100"/>
+        </g>
+      </svg>
+      <h1 id="verdict" class="verdict">&nbsp;</h1>
+      <p id="reason" class="reason">&nbsp;</p>
+      <p id="note" class="note"></p>
+    </section>
+
+    <div id="notices" class="notices"></div>
+
+    <nav class="actions" aria-label="Result options">
+      <button id="timeBtn" type="button">Change time</button>
+      <button id="whyBtn" type="button">Why this result</button>
+    </nav>
+    <button id="feedbackBtn" class="feedback-pill" type="button" hidden>How was your last outing?</button>
+    <p id="updated" class="updated">&nbsp;</p>
+  </main>
+
+  <section id="welcome" class="welcome" hidden>
+    <div id="welcomeLocation" class="welcome-step">
+      <svg class="jacket jacket-small" viewBox="0 0 240 240" aria-hidden="true"><use href="#jacket-art"/></svg>
+      <h1>Should you take a jacket today?</h1>
+      <p>Tell us where you’re going. You’ll get one clear answer.</p>
+      <button id="welcomeLocate" class="primary" type="button">Use my location</button>
+      <button id="welcomeCity" class="secondary" type="button">Choose a city</button>
+      <p class="fine">No account. Your settings stay on this device.</p>
+    </div>
+    <div id="welcomeSensitivity" class="welcome-step" hidden>
+      <h1>How easily do you get cold?</h1>
+      <p>This sets your starting point. You can change it any time.</p>
+      <button class="secondary" type="button" data-sensitivity="easily">I get cold easily</button>
+      <button class="secondary" type="button" data-sensitivity="average">About average</button>
+      <button class="secondary" type="button" data-sensitivity="warm">I’m usually warm</button>
+      <div class="welcome-links">
+        <button id="welcomeSkip" class="link" type="button">Skip</button>
+        <button id="welcomeAdvanced" class="link" type="button">More personal options</button>
+      </div>
+    </div>
+  </section>
+
+  <dialog id="placeSheet" class="sheet" aria-labelledby="placeTitle">
+    <header class="sheet-head"><h2 id="placeTitle">Where are you going?</h2><button class="link" type="button" data-close>Close</button></header>
+    <p id="placeMessage" class="sheet-message" hidden></p>
+    <button id="useLocation" class="row-btn" type="button">
+      <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> Use my location
+    </button>
+    <label class="field">
+      <span>City or destination</span>
+      <input id="placeSearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="Search, for example Jerusalem">
+    </label>
+    <div id="placeResults" class="place-list" aria-live="polite"></div>
+  </dialog>
+
+  <dialog id="timeSheet" class="sheet" aria-labelledby="timeTitle">
+    <header class="sheet-head"><h2 id="timeTitle">When will you be out?</h2><button class="link" type="button" data-close>Done</button></header>
+    <div id="timeOptions"></div>
+    <h3>How much of that is outdoors?</h3>
+    <div id="exposureOptions"></div>
+  </dialog>
+
+  <dialog id="whySheet" class="sheet" aria-labelledby="whyTitle">
+    <header class="sheet-head"><h2 id="whyTitle">Why this result</h2><button class="link" type="button" data-close>Close</button></header>
+    <div id="whyBody"></div>
+  </dialog>
+
+  <dialog id="settingsSheet" class="sheet" aria-labelledby="settingsTitle">
+    <header class="sheet-head"><h2 id="settingsTitle">Settings</h2><button class="link" type="button" data-close>Done</button></header>
+    <div id="settingsBody"></div>
+  </dialog>
+
+  <dialog id="feedbackSheet" class="sheet" aria-labelledby="feedbackTitle">
+    <header class="sheet-head"><h2 id="feedbackTitle">How was your outing?</h2><button class="link" type="button" data-close>Not now</button></header>
+    <div id="feedbackBody"></div>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

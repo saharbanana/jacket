@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#F6E5CB"/>
+  <defs>
+    <g id="sleeve">
+      <path fill="#C9742C" d="M86 58C68 62 55 70 48 83 41 97 31 140 23 176c-1 5 1 8 6 9l21 4c5 1 8-1 9-6l15-60Z"/>
+      <path fill="#9A5218" d="M25.300 165 62 172l-3 11c-1 5-4 7-9 6l-21-4c-5-1-7-4-6-9Z"/>
+    </g>
+  </defs>
+  <g transform="translate(118 112) scale(1.150)">
+    <path fill="#5C3312" d="M100 34Q120 26 140 34L120 62Z"/>
+    <use xlink:href="#sleeve" href="#sleeve"/>
+    <use xlink:href="#sleeve" href="#sleeve" transform="matrix(-1 0 0 1 240 0)"/>
+    <path fill="#C9742C" d="M84 57 104 46l16 16 16-16 20 11c9 5 14 13 14 24l2 117c0 6-4 9-9 9H77c-5 0-9-3-9-9l2-117c0-11 5-19 14-24Z"/>
+    <path fill="none" stroke="#A85E20" stroke-width="3" d="M70 92h100M70 118h100M69.500 144h101M69 170h102"/>
+    <path fill="#9A5218" d="M68.300 188h103.400l.3 10c0 6-4 9-9 9H77c-5 0-9-3-9-9Z"/>
+    <path fill="#9A5218" d="M101 33c-5 5-8 13-8 21l26 22 1-14Z"/>
+    <path fill="#9A5218" d="M139 33c5 5 8 13 8 21l-26 22-1-14Z"/>
+    <path fill="none" stroke="#FBE9CF" stroke-width="3.500" d="M120 64v143"/>
+    <rect fill="#FBE9CF" x="116" y="80" width="8" height="15" rx="3"/>
+    <path fill="none" stroke="#9A5218" stroke-width="5" stroke-linecap="round" d="M88 146l9 26M152 146l-9 26"/>
+  </g>
+</svg>

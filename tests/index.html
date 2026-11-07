@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Engine tests</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 24px; }
+  .fail { color: #b3121d; white-space: pre-wrap; }
+  .pass { color: #1c6b3a; }
+</style>
+<h1 id="summary">Running…</h1>
+<ul id="results"></ul>
+<script type="module">
+  import { tests } from './engine.test.js';
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const eq = (actual, expected) => {
+    if (!same(actual, expected)) throw new Error(`expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+  };
+  let failed = 0;
+  for (const [name, fn] of Object.entries(tests)) {
+    const li = document.createElement('li');
+    try {
+      fn(eq);
+      li.className = 'pass';
+      li.textContent = name;
+    } catch (e) {
+      failed++;
+      li.className = 'fail';
+      li.textContent = `${name}: ${e.message}`;
+    }
+    results.append(li);
+  }
+  const total = Object.keys(tests).length;
+  summary.textContent = `${total - failed} of ${total} passed`;
+</script>
+</html>

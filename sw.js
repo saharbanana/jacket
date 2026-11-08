@@ -1,6 +1,6 @@
 // Keeps the app shell available offline. Forecasts are never cached here: weather.js
 // stores them with their timestamp, so stale weather is always labeled as stale.
-const CACHE = 'jacket-shell-v2';
+const CACHE = 'jacket-shell-v3';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js', 'js/engine.js', 'js/store.js', 'js/weather.js',

@@ -135,6 +135,11 @@ function render() {
   if (result?.safety?.length) {
     notices.push(notice(`${result.safety.join(' ')} Check official weather warnings.`));
   }
+  const hasProfile = prefs.ageRange || prefs.sex || prefs.ancestry;
+  if (prefs.onboarded && !prefs.profileOffered && !hasProfile && result) {
+    notices.push(notice('New: add your age, sex and background for a more personal answer.',
+      { label: 'Add', run: () => openSettings(true) }));
+  }
   if (result?.ageCaveat) {
     notices.push(notice('Cold can be harder to notice with age, so this leans cautious. It isn’t a safety assessment.'));
   }
@@ -357,7 +362,8 @@ function clearProfile() {
   $('deletedNote').hidden = false;
 }
 
-function renderSettings(openAdvanced = false) {
+/** Age, sex, climate and background inputs, shared by Settings and onboarding. */
+function profileFields() {
   const set = key => value => { prefs[key] = value; persist(); render(); };
   const ancestryInput = h('select', { disabled: !prefs.ancestryConsent, onchange: e => set('ancestry')(e.target.value) },
     [['', 'Prefer not to say'], ...ANCESTRY_OPTIONS].map(([val, text]) => h('option', { value: val, selected: val === (prefs.ancestry || '') }, text)));
@@ -371,7 +377,21 @@ function renderSettings(openAdvanced = false) {
       render();
     },
   });
+  return [
+    pick('Age range', [['', 'Prefer not to say'], ['18-39', '18–39'], ['40-64', '40–64'], ['65+', '65+']],
+      prefs.ageRange, set('ageRange'), 'At 65+, your jacket point rises 1°C and close calls lean toward a jacket.'),
+    pick('Sex for temperature personalization', [['', 'Prefer not to say'], ['male', 'Male'], ['female', 'Female'], ['other', 'Other or not represented']],
+      prefs.sex, set('sex'), 'Women report feeling colder on average, so Female raises your jacket point 1°C.'),
+    pick('What climate did you mostly grow up in?', [['', 'Prefer not to say'], ['hot', 'Hot, tropical or hot desert'], ['mild', 'Mild or temperate'], ['cold', 'Cold, long winters'], ['mixed', 'Mixed or moved often']],
+      prefs.climate, set('climate')),
+    h('label', { class: 'check' }, consent, h('span', {}, 'I choose to save my ethnic or ancestral background on this device.')),
+    h('label', { class: 'field' }, h('span', {}, 'Ethnic or ancestral background'), ancestryInput,
+      h('span', { class: 'hint' }, 'Sensitive information. It’s never sent anywhere or used for ads. Some small studies found average differences in cold response, so African descent raises your jacket point 1°C and Arctic Indigenous lowers it 1°C. Other answers don’t change it.')),
+  ];
+}
 
+function renderSettings(openAdvanced = false) {
+  const set = key => value => { prefs[key] = value; persist(); render(); };
   $('settingsBody').replaceChildren(
     radios('How easily do you get cold?', 'sensitivity',
       [['easily', 'I get cold easily'], ['average', 'About average'], ['warm', 'I’m usually warm']],
@@ -385,15 +405,7 @@ function renderSettings(openAdvanced = false) {
     h('details', { class: 'advanced', id: 'advanced', open: openAdvanced },
       h('summary', {}, 'Advanced personalization (optional)'),
       h('p', { class: 'hint' }, 'Everything here is optional and stays on this device. Age, sex and background each nudge your jacket point slightly, by at most 2°C together, based on average differences in research. Averages don’t describe any one person, so your outing feedback can outweigh them. Climate doesn’t change your result yet.'),
-      pick('Age range', [['', 'Prefer not to say'], ['18-39', '18–39'], ['40-64', '40–64'], ['65+', '65+']],
-        prefs.ageRange, set('ageRange'), 'At 65+, your jacket point rises 1°C and close calls lean toward a jacket.'),
-      pick('Sex for temperature personalization', [['', 'Prefer not to say'], ['male', 'Male'], ['female', 'Female'], ['other', 'Other or not represented']],
-        prefs.sex, set('sex'), 'Women report feeling colder on average, so Female raises your jacket point 1°C.'),
-      pick('What climate did you mostly grow up in?', [['', 'Prefer not to say'], ['hot', 'Hot, tropical or hot desert'], ['mild', 'Mild or temperate'], ['cold', 'Cold, long winters'], ['mixed', 'Mixed or moved often']],
-        prefs.climate, set('climate')),
-      h('label', { class: 'check' }, consent, h('span', {}, 'I choose to save my ethnic or ancestral background on this device.')),
-      h('label', { class: 'field' }, h('span', {}, 'Ethnic or ancestral background'), ancestryInput,
-        h('span', { class: 'hint' }, 'Sensitive information. It’s never sent anywhere or used for ads. Some small studies found average differences in cold response, so African descent raises your jacket point 1°C and Arctic Indigenous lowers it 1°C. Other answers don’t change it.')),
+      profileFields(),
     ),
 
     h('div', { class: 'group' },
@@ -421,6 +433,7 @@ function renderSettings(openAdvanced = false) {
 }
 
 function openSettings(openAdvanced = false) {
+  if (!prefs.profileOffered) { prefs.profileOffered = true; persist(); render(); }
   renderSettings(openAdvanced);
   $('settingsSheet').showModal();
 }
@@ -478,6 +491,7 @@ function openFeedback() {
 
 function startApp() {
   prefs.onboarded = true;
+  prefs.profileOffered = true;
   persist();
   $('welcome').hidden = true;
   $('app').hidden = false;
@@ -486,6 +500,12 @@ function startApp() {
 function toSensitivityStep() {
   $('welcomeLocation').hidden = true;
   $('welcomeSensitivity').hidden = false;
+}
+
+function toProfileStep() {
+  $('welcomeSensitivity').hidden = true;
+  $('welcomeProfileFields').replaceChildren(...profileFields());
+  $('welcomeProfile').hidden = false;
 }
 
 function runOnboarding() {
@@ -512,11 +532,13 @@ function runOnboarding() {
   $('welcomeCity').addEventListener('click', () => openPlaces());
   document.querySelectorAll('[data-sensitivity]').forEach(btn => btn.addEventListener('click', () => {
     prefs.sensitivity = btn.dataset.sensitivity;
-    startApp();
-    render();
+    persist();
+    toProfileStep();
   }));
-  $('welcomeSkip').addEventListener('click', () => { startApp(); render(); });
-  $('welcomeAdvanced').addEventListener('click', () => { startApp(); render(); openSettings(true); });
+  $('welcomeSkip').addEventListener('click', toProfileStep);
+  const finish = () => { startApp(); render(); };
+  $('welcomeDone').addEventListener('click', finish);
+  $('welcomeProfileSkip').addEventListener('click', finish);
 }
 
 // Wiring ----------------------------------------------------------------------

@@ -38,6 +38,7 @@ export const DEFAULT_PREFS = {
   climate: null,
   ancestry: '',
   ancestryConsent: false,
+  profileOffered: false,
   feedback: { tally: 0, offset: 0 },
   feedbackEnabled: true,
 };

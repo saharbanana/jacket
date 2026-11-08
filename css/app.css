@@ -144,6 +144,7 @@ body[data-verdict="neutral"] .verdict { font-size: clamp(1.75rem, 8vw, 2.25rem);
 .welcome-step > p { color: var(--muted); }
 .welcome-step .primary, .welcome-step .secondary { width: 100%; }
 .welcome-step .fine { font-size: .875rem; }
+.welcome-fields { width: 100%; text-align: left; margin-bottom: .5rem; }
 .welcome-links { display: flex; justify-content: space-between; width: 100%; margin-top: .25rem; }
 .primary, .secondary { min-height: 3.25rem; border-radius: .9rem; font-weight: 600; padding: .5rem 1rem; }
 .primary { background: var(--accent); color: var(--on-accent); border: 0; }

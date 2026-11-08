@@ -8,6 +8,25 @@ export const BASE_THRESHOLD = { easily: 21, average: 18, warm: 15 };
 export const ACTIVITY_SHIFT = { standing: 2, walking: 0, running: -6 };
 export const EXPOSURE_SHIFT = { indoors: -3, short: 0, long: 1 };
 
+// Optional demographic nudges, in °C. These are small product guesses based on the
+// AVERAGE differences the report cites (sections 2.2–2.4), not validated coefficients.
+// Together they are capped at ±2 °C, and outing feedback can outweigh them over time.
+export const SEX_SHIFT = { female: 1, male: 0, other: 0 };
+export const AGE_SHIFT = { '18-39': 0, '40-64': 0, '65+': 1 };
+export const ANCESTRY_SHIFT = { african: 1, arctic: -1 };
+export const ANCESTRY_OPTIONS = [
+  ['african', 'Black African or African descent'],
+  ['east_asian', 'East Asian'],
+  ['south_asian', 'South Asian'],
+  ['mena', 'Middle Eastern or North African'],
+  ['european', 'European or white'],
+  ['latino', 'Hispanic or Latino'],
+  ['arctic', 'Inuit or other Arctic Indigenous'],
+  ['mixed', 'Mixed or multiple'],
+  ['other', 'Another background'],
+];
+const DEMOGRAPHIC_LIMIT = 2;
+
 const WET_PENALTY = 2;        // Apparent temperature ignores rain, so this is not double counted.
 const FIRM_DEFICIT = 3;       // Clearly below the comfort threshold.
 const SEVERE_DEFICIT = 6;     // Cold enough that even a single forecast hour counts.
@@ -27,14 +46,26 @@ const HEAVY_SNOW_CODES = new Set([75, 86]);
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
+/** Each piece of the personal "jacket point", so the app can explain it. */
+export function thresholdParts(profile = {}) {
+  const sex = SEX_SHIFT[profile.sex] ?? 0;
+  const age = AGE_SHIFT[profile.ageRange] ?? 0;
+  const ancestry = ANCESTRY_SHIFT[profile.ancestry] ?? 0;
+  return {
+    base: BASE_THRESHOLD[profile.sensitivity] ?? BASE_THRESHOLD.average,
+    activity: ACTIVITY_SHIFT[profile.activity] ?? 0,
+    exposure: EXPOSURE_SHIFT[profile.exposure] ?? 0,
+    sex, age, ancestry,
+    demographic: clamp(sex + age + ancestry, -DEMOGRAPHIC_LIMIT, DEMOGRAPHIC_LIMIT),
+    learned: clamp(profile.feedbackOffset ?? 0, -FEEDBACK_LIMIT, FEEDBACK_LIMIT),
+  };
+}
+
 /** Personal "jacket point", in apparent °C. Wind is deliberately absent: Open-Meteo's
  *  apparent temperature already includes it, so adding it again would double count. */
 export function comfortThreshold(profile = {}) {
-  const base = BASE_THRESHOLD[profile.sensitivity] ?? BASE_THRESHOLD.average;
-  const activity = ACTIVITY_SHIFT[profile.activity] ?? 0;
-  const exposure = EXPOSURE_SHIFT[profile.exposure] ?? 0;
-  const learned = clamp(profile.feedbackOffset ?? 0, -FEEDBACK_LIMIT, FEEDBACK_LIMIT);
-  return base + activity + exposure + learned;
+  const p = thresholdParts(profile);
+  return p.base + p.activity + p.exposure + p.demographic + p.learned;
 }
 
 const isSnowy = p => SNOW_CODES.has(p.code) && (p.precipProb ?? 100) >= 40;
@@ -64,8 +95,8 @@ export function safetyNotices(points) {
 /**
  * Should this person bring a jacket for these forecast hours?
  * Returns status 'take' | 'none' | 'unknown'. Missing data is never turned into a yes/no.
- * Sex, climate background and ancestry are intentionally not read here: section 5.4
- * rules out unvalidated group offsets. Age 65+ changes close calls, not the threshold.
+ * Sex, age and ancestry shift the threshold slightly (see thresholdParts). Age 65+ also
+ * tips close calls and rough weather toward a jacket. Climate background is not used.
  */
 export function decide(points, profile = {}) {
   const usable = (points ?? []).filter(p => Number.isFinite(p.apparent));

@@ -35,8 +35,11 @@ Phones only allow location access over HTTPS. Then open the link and choose
   another provider before monetizing. All provider code is in `js/weather.js`.
 - **Thresholds:** 21 / 18 / 15 °C and the other numbers in `js/engine.js` are hypotheses to pilot.
 - **Severe weather:** notices come from forecast values, not an official alert feed.
-- **Demographics:** sex, climate and ancestry are stored on the device only and never affect
-  the result. Age 65+ only changes close calls. Keep it that way until a pilot shows a benefit.
+- **Demographics:** sex (female +1 °C), age (65+ +1 °C, plus cautious close calls) and
+  background (African descent +1 °C, Arctic Indigenous −1 °C) nudge the jacket point, capped at
+  ±2 °C together (`SEX_SHIFT`, `AGE_SHIFT`, `ANCESTRY_SHIFT` in `js/engine.js`). These are
+  unvalidated guesses from research averages; the report recommends testing them in a pilot.
+  Climate is stored but unused. All of it stays on the device.
 - **Privacy:** get a privacy policy and legal review before release, especially for the
   ancestry field.
 - **Ads:** none are included. The report rules out a timed full-screen ad, so start with a

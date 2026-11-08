@@ -1,7 +1,7 @@
 // Scenario tests for the decision engine, mirroring sections 5.5, 5.6 and 11.1 of the report.
 // Open tests/index.html through the local server to run them.
 import {
-  decide, comfortThreshold, reasonText, precipNote, applyFeedback, selectWindow, safetyNotices,
+  decide, comfortThreshold, thresholdParts, reasonText, precipNote, applyFeedback, selectWindow, safetyNotices,
 } from '../js/engine.js';
 
 const T0 = Date.UTC(2026, 10, 7, 10) / 1000;
@@ -70,14 +70,29 @@ export const tests = {
     eq(r.leanedCautious, true);
     eq(r.ageCaveat, true);
   },
-  '65+ does not get a fixed offset on a clear warm day': eq => {
+  '65+ still says no jacket on a clear warm day': eq => {
     eq(decide(series(24, 24), { ageRange: '65+' }).status, 'none');
   },
-  'sex, climate and ancestry never change the decision': eq => {
-    const plain = decide(series(18.5, 18.5));
-    const withDemo = decide(series(18.5, 18.5), { sex: 'female', climate: 'hot', ancestry: 'anything' });
-    eq(withDemo.status, plain.status);
-    eq(withDemo.threshold, plain.threshold);
+  'sex, age and background each nudge the threshold by 1°C': eq => {
+    eq(comfortThreshold({ sex: 'female' }), 19);
+    eq(comfortThreshold({ sex: 'male' }), 18);
+    eq(comfortThreshold({ ageRange: '65+' }), 19);
+    eq(comfortThreshold({ ageRange: '40-64' }), 18);
+    eq(comfortThreshold({ ancestry: 'african' }), 19);
+    eq(comfortThreshold({ ancestry: 'arctic' }), 17);
+    eq(comfortThreshold({ ancestry: 'european' }), 18);
+  },
+  'demographic nudges together are capped at +2°C': eq => {
+    const p = thresholdParts({ sex: 'female', ageRange: '65+', ancestry: 'african' });
+    eq(p.demographic, 2);
+    eq(comfortThreshold({ sex: 'female', ageRange: '65+', ancestry: 'african' }), 20);
+  },
+  'a nudge can flip a close call': eq => {
+    eq(decide(series(18.5, 18.5)).status, 'none');
+    eq(decide(series(18.5, 18.5), { sex: 'female' }).status, 'take');
+  },
+  'climate background and unknown values change nothing': eq => {
+    eq(comfortThreshold({ climate: 'hot', ancestry: 'anything', sex: 'x' }), 18);
   },
   'near the threshold it flags a close call': eq => {
     const r = decide(series(18.5, 18.5));

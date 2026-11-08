@@ -135,11 +135,6 @@ function render() {
   if (result?.safety?.length) {
     notices.push(notice(`${result.safety.join(' ')} Check official weather warnings.`));
   }
-  const hasProfile = prefs.ageRange || prefs.sex || prefs.ancestry;
-  if (prefs.onboarded && !prefs.profileOffered && !hasProfile && result) {
-    notices.push(notice('New: add your age, sex and background for a more personal answer.',
-      { label: 'Add', run: () => openSettings(true) }));
-  }
   if (result?.ageCaveat) {
     notices.push(notice('Cold can be harder to notice with age, so this leans cautious. It isn’t a safety assessment.'));
   }
@@ -390,7 +385,7 @@ function profileFields() {
   ];
 }
 
-function renderSettings(openAdvanced = false) {
+function renderSettings() {
   const set = key => value => { prefs[key] = value; persist(); render(); };
   $('settingsBody').replaceChildren(
     radios('How easily do you get cold?', 'sensitivity',
@@ -402,9 +397,9 @@ function renderSettings(openAdvanced = false) {
     h('div', { class: 'group' }, radios('Temperature units', 'units',
       [['C', '°C'], ['F', '°F']], prefs.units, set('units'), true)),
 
-    h('details', { class: 'advanced', id: 'advanced', open: openAdvanced },
-      h('summary', {}, 'Advanced personalization (optional)'),
-      h('p', { class: 'hint' }, 'Everything here is optional and stays on this device. Age, sex and background each nudge your jacket point slightly, by at most 2°C together, based on average differences in research. Averages don’t describe any one person, so your outing feedback can outweigh them. Climate doesn’t change your result yet.'),
+    h('div', { class: 'group', id: 'aboutYou' },
+      h('h3', {}, 'About you'),
+      h('p', { class: 'hint' }, 'Stays on this device. Age, sex and background each nudge your jacket point slightly, by at most 2°C together, based on average differences in research. Averages don’t describe any one person, so your outing feedback can outweigh them. Climate doesn’t change your result yet.'),
       profileFields(),
     ),
 
@@ -432,9 +427,8 @@ function renderSettings(openAdvanced = false) {
   );
 }
 
-function openSettings(openAdvanced = false) {
-  if (!prefs.profileOffered) { prefs.profileOffered = true; persist(); render(); }
-  renderSettings(openAdvanced);
+function openSettings() {
+  renderSettings();
   $('settingsSheet').showModal();
 }
 
@@ -503,6 +497,7 @@ function toSensitivityStep() {
 }
 
 function toProfileStep() {
+  $('welcomeLocation').hidden = true;
   $('welcomeSensitivity').hidden = true;
   $('welcomeProfileFields').replaceChildren(...profileFields());
   $('welcomeProfile').hidden = false;
@@ -565,8 +560,13 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-if (prefs.onboarded) {
+if (prefs.onboarded && prefs.profileOffered) {
   $('app').hidden = false;
+  refresh();
+} else if (prefs.onboarded) {
+  // Set up before the "About you" step existed: show it once now.
+  runOnboarding();
+  toProfileStep();
   refresh();
 } else {
   // Choosing a city during onboarding happens in the shared place sheet.

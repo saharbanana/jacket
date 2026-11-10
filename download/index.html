@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get Jacket? – Take a jacket or not</title>
+  <meta name="description" content="Download Jacket? for Android, or use it in your browser. One clear answer: take a jacket or not, for where and when you're going.">
+  <meta property="og:title" content="Jacket? – Take a jacket or not">
+  <meta property="og:description" content="One clear answer: take a jacket or not, for where and when you're going.">
+  <meta property="og:image" content="https://takeajacket.com/store/feature-graphic.png">
+  <meta name="theme-color" content="#ECE7DF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1F1D1A" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ECE7DF; --take: #F6E5CB; --none: #D9EAF1;
+      --surface: #FFFBF4; --surface-2: #F3ECE1; --ink: #241B13; --muted: #574C42;
+      --line: #D9CFC0; --accent: #A04E12; --on-accent: #FFFBF4;
+      --font: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Noto Sans", system-ui, sans-serif;
+      --display: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Noto Sans", system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1F1D1A; --take: #2C1E10; --none: #10242E;
+        --surface: #26211C; --surface-2: #332C25; --ink: #F8EFE3; --muted: #CFC3B5;
+        --line: #4A4137; --accent: #F0A35E; --on-accent: #2A1A0B;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.6 var(--font); }
+    a { color: var(--accent); }
+    .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--take) 0 50%, var(--none) 50% 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero .wrap {
+      display: grid; gap: 2rem; align-items: center;
+      grid-template-columns: 1fr; padding-top: 2.5rem; padding-bottom: 2.5rem;
+    }
+    @media (min-width: 52rem) { .hero .wrap { grid-template-columns: 1.15fr .85fr; padding-top: 4rem; padding-bottom: 4rem; } }
+    .brand { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    .brand img { width: 3.25rem; height: 3.25rem; border-radius: .9rem; box-shadow: 0 2px 8px rgb(0 0 0 / .15); }
+    .brand span { font: 700 1.35rem/1 var(--display); }
+    h1 { font: 800 clamp(2.25rem, 7vw, 3.75rem)/1.02 var(--display); letter-spacing: -.02em; margin: 0 0 1rem; }
+    h1 em { font-style: normal; color: var(--accent); }
+    .lede { font-size: 1.15rem; color: var(--muted); max-width: 34rem; margin: 0 0 1.75rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .6rem; min-height: 3.25rem;
+      padding: .8rem 1.4rem; border-radius: 999px; font: 650 1.05rem/1.1 var(--font);
+      text-decoration: none; border: 2px solid var(--accent);
+    }
+    .btn.primary { background: var(--accent); color: var(--on-accent); }
+    .btn.secondary { color: var(--accent); background: transparent; }
+    .btn svg { width: 1.3rem; height: 1.3rem; flex: none; }
+    .btn small { display: block; font-weight: 500; font-size: .8rem; opacity: .85; margin-top: .15rem; }
+    .meta { margin: 1rem 0 0; font-size: .9rem; color: var(--muted); }
+    .phone {
+      justify-self: center; width: min(17rem, 72vw); aspect-ratio: 9 / 16;
+      border-radius: 2rem; overflow: hidden; border: .55rem solid #15110D;
+      box-shadow: 0 20px 50px rgb(0 0 0 / .28);
+      transform: rotate(2deg);
+    }
+    .phone img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    section { padding: 3rem 0; }
+    h2 { font: 750 clamp(1.5rem, 4.5vw, 2rem)/1.15 var(--display); margin: 0 0 1.25rem; letter-spacing: -.01em; }
+    .features { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 1.25rem; padding: 1.25rem; }
+    .card h3 { margin: .5rem 0 .35rem; font: 700 1.1rem/1.25 var(--display); }
+    .card p { margin: 0; color: var(--muted); }
+    .icon { font-size: 1.6rem; line-height: 1; }
+
+    .shots { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .75rem; }
+    .shots figure { margin: 0; flex: 0 0 min(13rem, 62vw); scroll-snap-align: start; }
+    .shots img { width: 100%; border-radius: 1.1rem; border: 1px solid var(--line); display: block; aspect-ratio: 9 / 16; object-fit: cover; }
+    .shots figcaption { font-size: .9rem; color: var(--muted); margin-top: .5rem; }
+
+    .steps { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+    .steps ol { margin: .5rem 0 0; padding-left: 1.25rem; }
+    .steps li { margin: .35rem 0; }
+    .note { margin-top: 1rem; font-size: .92rem; color: var(--muted); }
+    code { font: .85rem/1.4 ui-monospace, "Cascadia Code", Consolas, monospace; overflow-wrap: anywhere; }
+
+    footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; color: var(--muted); font-size: .92rem; }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between; }
+    footer nav { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+  </style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="brand"><img src="../icons/icon-192.png" alt=""><span>Jacket?</span></div>
+      <h1>Take a jacket <em>or not.</em><br>One tap, one answer.</h1>
+      <p class="lede">Jacket? checks the hourly “feels like” forecast for where you’re going and the hours you’ll be out, then gives you one big answer. No charts to read.</p>
+      <div class="actions">
+        <a class="btn primary" href="jacket.apk" download="Jacket.apk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+          <span>Download for Android<small>APK · 1.2 MB · version 1.0.0</small></span>
+        </a>
+        <a class="btn secondary" href="../">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z"/></svg>
+          <span>Open in your browser</span>
+        </a>
+      </div>
+      <p class="meta">Free · No account · No ads · No tracking · Google Play version coming soon</p>
+    </div>
+    <div class="phone"><img src="../store/screenshot-1-take.png" alt="Jacket? showing TAKE A JACKET for London, this evening"></div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <h2>Made to answer one question well</h2>
+      <div class="features">
+        <div class="card"><div class="icon" aria-hidden="true">🧥</div><h3>One big answer</h3><p>TAKE A JACKET or NO JACKET NEEDED, with “Close call” when it’s borderline.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🕒</div><h3>The hours you’ll be out</h3><p>Right now, the next 3 hours, the rest of today, or this evening. It warns you when a mild afternoon turns into a chilly night.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🙋</div><h3>Tuned to you</h3><p>Tell it if you get cold easily or run warm, and what you’ll be doing. It learns from how your outings went.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🌧️</div><h3>Rain is separate</h3><p>A waterproof layer isn’t always a warm one, so rain and snow get their own advice.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🔍</div><h3>Shows its working</h3><p>“Why this result” lays out the hour-by-hour forecast behind every answer.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🔒</div><h3>Private by design</h3><p>Your settings stay on your phone. Locations are rounded to about 1 km before the forecast request.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <h2>See it</h2>
+      <div class="shots">
+        <figure><img loading="lazy" src="../store/screenshot-1-take.png" alt="Take a jacket screen"><figcaption>Cold later? Take a jacket.</figcaption></figure>
+        <figure><img loading="lazy" src="../store/screenshot-2-none.png" alt="No jacket needed screen"><figcaption>Warm all day? Leave it.</figcaption></figure>
+        <figure><img loading="lazy" src="../store/screenshot-3-why.png" alt="Why this result, hour by hour"><figcaption>Every answer, explained.</figcaption></figure>
+        <figure><img loading="lazy" src="../store/screenshot-4-settings.png" alt="Settings"><figcaption>Set it up your way.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <h2>How to install</h2>
+      <div class="steps">
+        <div class="card">
+          <h3>Android: the APK</h3>
+          <ol>
+            <li>Tap <a href="jacket.apk" download="Jacket.apk">Download for Android</a>.</li>
+            <li>Open the downloaded file. If Android asks, allow your browser to install unknown apps.</li>
+            <li>Tap <strong>Install</strong>, then open Jacket?.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Any phone: the web app</h3>
+          <ol>
+            <li>Open <a href="../">takeajacket.com</a>.</li>
+            <li><strong>Android:</strong> Chrome menu ⋮ → <strong>Install app</strong>.</li>
+            <li><strong>iPhone:</strong> Share → <strong>Add to Home Screen</strong>.</li>
+          </ol>
+        </div>
+      </div>
+      <p class="note">The APK and the Google Play version are signed with different keys. If you install this APK and later want the Play version, uninstall this one first.<br>
+        APK SHA-256: <code>703A36925EBFC5768687A01B6F0C4C139C703C0994F98EEDDA8BEC67F9B15549</code></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 One Answer Apps · Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0)</span>
+    <nav><a href="../">Open the app</a><a href="../privacy.html">Privacy policy</a><a href="https://github.com/saharbanana/jacket">Source on GitHub</a></nav>
+  </div>
+</footer>
+</body>
+</html>

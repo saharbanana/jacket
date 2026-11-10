@@ -52,11 +52,11 @@ Weather, Lifestyle
 ## Contact details
 
 - Email: your public developer email (required, shown on the listing)
-- Website: https://saharbanana.github.io/jacket/
+- Website: https://takeajacket.com/
 
 ## Privacy policy URL
 
-https://saharbanana.github.io/jacket/privacy.html
+https://takeajacket.com/privacy.html
 
 ## Graphics (in this folder)
 

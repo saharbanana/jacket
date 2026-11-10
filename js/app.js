@@ -415,7 +415,8 @@ function renderSettings() {
 
     h('div', { class: 'group' },
       h('h3', {}, 'Privacy'),
-      h('p', { class: 'hint' }, 'No account and no ads. Your settings stay on this device. To get a forecast, your place is sent to Open-Meteo, rounded to about 1 km. Location is only read while the app is open.'),
+      h('p', { class: 'hint' }, 'No account and no ads. Your settings stay on this device. To get a forecast, your place is sent to Open-Meteo, rounded to about 1 km. Location is only read while the app is open. ',
+        h('a', { href: 'privacy.html', target: '_blank', rel: 'noopener' }, 'Privacy policy')),
       h('button', { class: 'link danger', type: 'button', onclick: clearProfile }, 'Delete my optional profile data'),
       h('p', { class: 'hint', id: 'deletedNote', hidden: true, role: 'status' }, 'Deleted age, sex, climate, background and learned adjustment.'),
     ),

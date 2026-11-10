@@ -25,7 +25,11 @@ if (prefs.ancestry && !ANCESTRY_OPTIONS.some(([key]) => key === prefs.ancestry))
   prefs.ancestry = '';
   savePrefs(prefs);
 }
-let windowKey = 'next3';              // Back to the default on each launch, as the spec asks.
+// Back to the default on each launch, as the spec asks, unless a home-screen
+// shortcut (manifest "shortcuts") opened the app with ?when=<window>.
+const launchWindow = new URLSearchParams(location.search).get('when');
+let windowKey = Object.hasOwn(WINDOWS, launchWindow) ? launchWindow : 'next3';
+if (launchWindow) history.replaceState(null, '', location.pathname);
 let forecast = null;
 let phase = 'loading';                // loading | ready | stale | error | noplace
 let result = null;

@@ -64,7 +64,7 @@ function profile() {
     exposure: prefs.exposure,
     ageRange: prefs.ageRange,
     sex: prefs.sex,
-    ancestry: prefs.ancestryConsent ? prefs.ancestry : null,
+    ancestry: prefs.ancestry || null,
     feedbackOffset: prefs.feedback.offset,
   };
 }
@@ -352,7 +352,7 @@ function openWhy() {
 
 function clearProfile() {
   Object.assign(prefs, {
-    ageRange: null, sex: null, climate: null, ancestry: '', ancestryConsent: false,
+    ageRange: null, sex: null, climate: null, ancestry: '',
     feedback: { tally: 0, offset: 0 },
   });
   persist();
@@ -361,32 +361,25 @@ function clearProfile() {
   $('deletedNote').hidden = false;
 }
 
-/** Age, sex, climate and background inputs, shared by Settings and onboarding. */
-function profileFields() {
+/** Age, sex, climate and background inputs, shared by Settings and onboarding.
+ *  Every answer is optional: leaving "Prefer not to say" saves nothing.
+ *  `compact` drops the explanations so onboarding fits on one phone screen. */
+function profileFields(compact = false) {
   const set = key => value => { prefs[key] = value; persist(); render(); };
-  const ancestryInput = h('select', { disabled: !prefs.ancestryConsent, onchange: e => set('ancestry')(e.target.value) },
-    [['', 'Prefer not to say'], ...ANCESTRY_OPTIONS].map(([val, text]) => h('option', { value: val, selected: val === (prefs.ancestry || '') }, text)));
-  const consent = h('input', {
-    type: 'checkbox', checked: prefs.ancestryConsent,
-    onchange: e => {
-      prefs.ancestryConsent = e.target.checked;
-      ancestryInput.disabled = !e.target.checked;
-      if (!e.target.checked) { prefs.ancestry = ''; ancestryInput.value = ''; }
-      persist();
-      render();
-    },
-  });
-  return [
-    pick('Age range', [['', 'Prefer not to say'], ['18-39', '18–39'], ['40-64', '40–64'], ['65+', '65+']],
-      prefs.ageRange, set('ageRange'), 'At 65+, your jacket point rises 1°C and close calls lean toward a jacket.'),
-    pick('Sex for temperature personalization', [['', 'Prefer not to say'], ['male', 'Male'], ['female', 'Female'], ['other', 'Other or not represented']],
-      prefs.sex, set('sex'), 'Women report feeling colder on average, so Female raises your jacket point 1°C.'),
-    pick('What climate did you mostly grow up in?', [['', 'Prefer not to say'], ['hot', 'Hot, tropical or hot desert'], ['mild', 'Mild or temperate'], ['cold', 'Cold, long winters'], ['mixed', 'Mixed or moved often']],
+  const hint = text => (compact ? null : text);
+  const none = ['', compact ? 'Not set' : 'Prefer not to say'];
+  const fields = [
+    pick('Age range', [none,['18-39', '18–39'], ['40-64', '40–64'], ['65+', '65+']],
+      prefs.ageRange, set('ageRange'), hint('At 65+, your jacket point rises 1°C and close calls lean toward a jacket.')),
+    pick(compact ? 'Sex' : 'Sex for temperature personalization', [none, ['male', 'Male'], ['female', 'Female'], ['other', 'Other or not represented']],
+      prefs.sex, set('sex'), hint('Women report feeling colder on average, so Female raises your jacket point 1°C.')),
+    pick(compact ? 'Climate you grew up in' : 'What climate did you mostly grow up in?', [none, ['hot', 'Hot, tropical or hot desert'], ['mild', 'Mild or temperate'], ['cold', 'Cold, long winters'], ['mixed', 'Mixed or moved often']],
       prefs.climate, set('climate')),
-    h('label', { class: 'check' }, consent, h('span', {}, 'I choose to save my ethnic or ancestral background on this device.')),
-    h('label', { class: 'field' }, h('span', {}, 'Ethnic or ancestral background'), ancestryInput,
-      h('span', { class: 'hint' }, 'Sensitive information. It’s never sent anywhere or used for ads. Some small studies found average differences in cold response, so African descent raises your jacket point 1°C and Arctic Indigenous lowers it 1°C. Other answers don’t change it.')),
+    pick('Ethnic or ancestral background', [none, ...ANCESTRY_OPTIONS],
+      prefs.ancestry, value => set('ancestry')(value ?? ''),
+      hint('Sensitive information, so it’s optional, stays on this device, and is never used for ads. Some small studies found average differences in cold response, so African descent raises your jacket point 1°C and Arctic Indigenous lowers it 1°C. Other answers don’t change it.')),
   ];
+  return compact ? [h('div', { class: 'field-pair' }, fields[0], fields[1]), ...fields.slice(2)] : fields;
 }
 
 function renderSettings() {
@@ -504,7 +497,7 @@ function toSensitivityStep() {
 function toProfileStep() {
   $('welcomeLocation').hidden = true;
   $('welcomeSensitivity').hidden = true;
-  $('welcomeProfileFields').replaceChildren(...profileFields());
+  $('welcomeProfileFields').replaceChildren(...profileFields(true));
   $('welcomeProfile').hidden = false;
 }
 

@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.oneanswerapps.jacket",
+    "sha256_cert_fingerprints": [
+      "AD:39:B9:B1:1C:09:C1:66:8D:62:F1:F0:4C:BA:D6:82:B1:5C:49:40:72:58:E9:54:7B:90:DA:F0:5A:91:0D:B9"
+    ]
+  }
+}]

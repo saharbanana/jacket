@@ -4,7 +4,7 @@
 // The numbers below are PRODUCT HYPOTHESES from section 5.3 of the report, chosen
 // to bootstrap testing. They are not measured physiological cutoffs.
 
-export const BASE_THRESHOLD = { easily: 21, average: 18, warm: 15 };
+export const BASE_THRESHOLD = { easily: 21, average: 18, warm: 17 };
 export const ACTIVITY_SHIFT = { standing: 2, walking: 0, running: -6 };
 export const EXPOSURE_SHIFT = { indoors: -3, short: 0, long: 1 };
 

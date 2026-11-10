@@ -33,7 +33,7 @@ Phones only allow location access over HTTPS. Then open the link and choose
 
 - **Weather license:** the free Open-Meteo API is non-commercial. Move to a paid plan or
   another provider before monetizing. All provider code is in `js/weather.js`.
-- **Thresholds:** 21 / 18 / 15 °C and the other numbers in `js/engine.js` are hypotheses to pilot.
+- **Thresholds:** 21 / 18 / 17 °C and the other numbers in `js/engine.js` are hypotheses to pilot.
 - **Severe weather:** notices come from forecast values, not an official alert feed.
 - **Demographics:** sex (female +1 °C), age (65+ +1 °C, plus cautious close calls) and
   background (African descent +1 °C, Arctic Indigenous −1 °C) nudge the jacket point, capped at
